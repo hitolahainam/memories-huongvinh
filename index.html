@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hành Trình Ký Ức | Huong Vinh 2026</title>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #fdfaf6; /* Màu giấy sổ lưu bút */
+            --accent-color: #1a2a6c;
+            --text-color: #444;
+            --shadow-card: 0 20px 40px rgba(0,0,0,0.08);
+        }
+
+        html {
+            scroll-behavior: smooth;
+            overflow-x: hidden;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            margin: 0;
+            padding: 0;
+            font-family: 'Quicksand', sans-serif;
+            color: var(--text-color);
+            /* Thêm họa tiết chấm bi mờ cho giống sổ tay */
+            background-image: radial-gradient(#e0dcd3 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+
+        /* --- Trình phát nhạc --- */
+        .music-player {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 10px 15px;
+            border-radius: 50px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            z-index: 2000;
+            backdrop-filter: blur(5px);
+            border: 2px solid #ffdecf;
+        }
+
+        /* --- Welcome Section --- */
+        #start {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, rgba(26,42,108,0.9) 0%, rgba(178,31,31,0.9) 50%, rgba(253,187,45,0.9) 100%);
+            color: white;
+            text-align: center;
+            position: relative;
+        }
+
+        #start h1 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 5rem;
+            margin-bottom: 0;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.3);
+        }
+
+        .btn-start {
+            background-color: white;
+            color: var(--accent-color);
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            border-radius: 50px;
+            cursor: pointer;
+            margin-top: 40px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 10;
+        }
+
+        .btn-start:hover {
+            transform: scale(1.1) translateY(-5px);
+            box-shadow: 0 12px 25px rgba(0,0,0,0.4);
+        }
+
+        /* --- Journey Event Section --- */
+        .event {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+            cursor: pointer;
+        }
+
+        .card-container {
+            width: 90%;
+            max-width: 850px;
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: var(--shadow-card);
+            position: relative;
+            opacity: 0;
+            transform: translateY(60px);
+            transition: all 1s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        .event.active .card-container {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Trang trí hoa lơ lửng */
+        .flower {
+            position: absolute;
+            font-size: 3rem;
+            z-index: 10;
+            animation: float 4s ease-in-out infinite;
+            filter: drop-shadow(2px 4px 6px rgba(0,0,0,0.1));
+        }
+
+        .flower-tl { top: -20px; left: -20px; animation-delay: 0s; }
+        .flower-tr { top: -20px; right: -20px; animation-delay: 1s; font-size: 2.5rem; }
+        .flower-bl { bottom: -20px; left: -20px; animation-delay: 2s; }
+        .flower-br { bottom: -20px; right: -20px; animation-delay: 0.5s; font-size: 3.5rem; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-15px) rotate(10deg); }
+        }
+
+        /* Dải màu gradient bọc quanh ảnh */
+        .img-wrapper {
+            width: 100%;
+            border-radius: 15px;
+            padding: 8px; /* Độ dày của viền màu */
+            background: linear-gradient(45deg, #ff9a9e 0%, #fecfef 99%, #fecfef 100%); /* Màu viền pastel */
+            box-sizing: border-box;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        /* Đổi màu viền luân phiên cho từng card */
+        .event:nth-child(even) .img-wrapper {
+            background: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%);
+        }
+        .event:nth-child(3n) .img-wrapper {
+            background: linear-gradient(to top, #ffd194 0%, #70e1f5 100%);
+        }
+
+        .img-wrapper img {
+            width: 100%;
+            height: 400px;
+            object-fit: cover;
+            border-radius: 10px;
+            display: block;
+        }
+
+        .text-content {
+            text-align: center;
+        }
+
+        .text-content h2 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 3rem;
+            color: var(--accent-color);
+            margin: 0 0 15px 0;
+        }
+
+        .text-content p {
+            font-size: 1.15rem;
+            line-height: 1.8;
+            margin-bottom: 20px;
+        }
+
+        .click-hint {
+            font-size: 0.95rem;
+            color: #aaa;
+            font-style: italic;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        /* --- Video Style --- */
+        .video-item {
+            width: 100%;
+            border-radius: 10px;
+            display: block;
+            max-height: 450px;
+            object-fit: cover;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+
+        /* --- End Section --- */
+        #end {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            background: #1a2a6c;
+            color: white;
+            padding: 20px;
+        }
+
+        #end h2 {
+            font-family: 'Dancing Script', cursive;
+            font-size: 4.5rem;
+            color: #ffd194;
+            margin-bottom: 20px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            #start h1 { font-size: 3.5rem; }
+            .img-wrapper img { height: 280px; }
+            .text-content h2 { font-size: 2.5rem; }
+            .flower { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="music-player">
+        <span style="margin-right: 10px;">🎵</span>
+        <audio id="bg-music" autoplay loop controls>
+            <source src="music.mp3" type="audio/mpeg">
+        </audio>
+    </div>
+
+    <section id="start">
+        <div class="flower flower-tl" style="font-size: 5rem;">✨</div>
+        <div class="flower flower-br" style="font-size: 4rem;">🌸</div>
+        <h1>Hành Trình Ký Ức</h1>
+        <p style="font-size: 1.2rem; letter-spacing: 2px; margin-top: 10px;">THPT HƯƠNG VINH | 2025 - 2026</p>
+        <button class="btn-start" onclick="startJourney()">Bắt đầu hành trình 💌</button>
+    </section>
+
+    <section class="event" id="event1" onclick="nextEvent(2)">
+        <div class="card-container">
+            <div class="flower flower-tl">🌻</div>
+            <div class="flower flower-br">✨</div>
+            <div class="img-wrapper">
+                <img src="anh1.jpg" alt="Ky niem 1">
+            </div>
+            <div class="text-content">
+                <h2>Cột mốc bỡ ngỡ</h2>
+                <p>Thùy, Nhi và Bình ơi... Nam còn nhớ mãi những ngày đầu tiên chúng mình bước chân vào cổng trường Hương Vinh. Gương mặt ai cũng đầy lo lắng nhưng tràn đầy háo hức. Khoảng thời gian ấy nói ngắn thì không ngắn nhưng bảo dài thì cũng chẳng quá dài Nhi nhỉ?</p>
+                <p class="click-hint">(Chạm nhẹ để đi tiếp...)</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="event" id="event2" onclick="nextEvent(3)">
+        <div class="card-container">
+            <div class="flower flower-tr">🌸</div>
+            <div class="flower flower-bl">🌺</div>
+            <div class="img-wrapper">
+                <img src="anh2.jpg" alt="Ky niem 2">
+            </div>
+            <div class="text-content">
+                <h2>Tiết giảng đầu tiên</h2>
+                <p>Nhi nhớ tiết giảng đầu tiên của tụi mình không? Những áp lực của công việc, của việc làm sao để dạy tốt, quản lý giỏi dường như bóp nghẹt lấy tụi mình. Nhưng thật tự hào là chúng ta đều đã sát cánh vượt qua.</p>
+                <p class="click-hint">(Chạm nhẹ để đi tiếp...)</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="event" id="event3" onclick="nextEvent(4)">
+        <div class="card-container">
+            <div class="flower flower-tl">✨</div>
+            <div class="flower flower-br">🍀</div>
+            <div class="img-wrapper">
+                <img src="anh3.jpg" alt="Ky niem 3">
+            </div>
+            <div class="text-content">
+                <h2>Tập thể tinh nghịch</h2>
+                <p>Ôi những lớp chủ nhiệm đáng yêu nhưng cũng 'nhức đầu'. Có những lúc các em nghịch quá khiến tụi mình cảm thấy mệt mỏi và sốc. Nhưng chính Thùy và Bình đã luôn ở bên động viên, chỉ bảo cho Nam những nghệ thuật "mềm nắn rắn buông".</p>
+                <p class="click-hint">(Chạm nhẹ để đi tiếp...)</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="event" id="event4" onclick="nextEvent(5)">
+        <div class="card-container">
+            <div class="flower flower-tr">🌼</div>
+            <div class="flower flower-bl">✨</div>
+            <div class="img-wrapper">
+                <img src="anh4.jpg" alt="Ky niem 4">
+            </div>
+            <div class="text-content">
+                <h2>Hội trại cháy hết mình</h2>
+                <p>Kỷ niệm không chỉ có áp lực. Đêm đốt lửa trại, tiếng cười rộn rã của học sinh, và cả sự chuẩn bị 'mất ăn mất ngủ' của 4 trưởng, phó đoàn tụi mình. Mọi thứ đã khép lại một cách vô cùng trọn vẹn.</p>
+                <p class="click-hint">(Chạm nhẹ để đi tiếp...)</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="event" id="event5" onclick="nextEvent(6)">
+        <div class="card-container">
+            <div class="flower flower-tl">💖</div>
+            <div class="flower flower-br">🌸</div>
+            <div class="img-wrapper">
+                <img src="anh5.jpg" alt="Ky niem 5">
+            </div>
+            <div class="text-content">
+                <h2>Đêm Memories cháy bỏng</h2>
+                <p>Hành trình trọn vẹn này có một cái kết rực rỡ Thùy nhỉ. Đêm đó nghe 3 bạn hô vang "Memories", Nam thực sự xúc động. Cảm ơn Thùy đã luôn đồng hành, Nhi luôn hỗ trợ, và Bình luôn gánh vác cùng Nam.</p>
+                <p class="click-hint">(Chạm nhẹ để đi tiếp...)</p>
+            </div>
+        </div>
+    </section>
+
+     <section class="event" id="event5" onclick="nextEvent(6)">
+        <div class="card-container">
+            <div class="flower flower-tl">💖</div>
+            <div class="flower flower-br">🌸</div>
+            <div class="img-wrapper">
+                <img src="anh5.jpg" alt="Ky niem 5">
+            </div>
+            <div class="text-content">
+                <h2>Đêm Memories cháy bỏng</h2>
+                <p>Hành trình trọn vẹn này có một cái kết rực rỡ Thùy nhỉ. Đêm đó nghe 3 bạn hô vang "Memories", Nam thực sự xúc động. Cảm ơn Thùy đã luôn đồng hành, Nhi luôn hỗ trợ, và Bình luôn gánh vác cùng Nam.</p>
+                <p class="click-hint">(Chạm nhẹ để đi tiếp...)</p>
+            </div>
+        </div>
+    </section>
+     <section class="event" id="event5" onclick="nextEvent(6)">
+        <div class="card-container">
+            <div class="flower flower-tl">💖</div>
+            <div class="flower flower-br">🌸</div>
+            <div class="img-wrapper">
+                <img src="anh5.jpg" alt="Ky niem 5">
+            </div>
+            <div class="text-content">
+                <h2>Đêm Memories cháy bỏng</h2>
+                <p>Hành trình trọn vẹn này có một cái kết rực rỡ Thùy nhỉ. Đêm đó nghe 3 bạn hô vang "Memories", Nam thực sự xúc động. Cảm ơn Thùy đã luôn đồng hành, Nhi luôn hỗ trợ, và Bình luôn gánh vác cùng Nam.</p>
+                <p class="click-hint">(Chạm nhẹ để đi tiếp...)</p>
+            </div>
+        </div>
+    </section>
+     <section class="event" id="event5" onclick="nextEvent(6)">
+        <div class="card-container">
+            <div class="flower flower-tl">💖</div>
+            <div class="flower flower-br">🌸</div>
+            <div class="img-wrapper">
+                <img src="anh5.jpg" alt="Ky niem 5">
+            </div>
+            <div class="text-content">
+                <h2>Đêm Memories cháy bỏng</h2>
+                <p>Hành trình trọn vẹn này có một cái kết rực rỡ Thùy nhỉ. Đêm đó nghe 3 bạn hô vang "Memories", Nam thực sự xúc động. Cảm ơn Thùy đã luôn đồng hành, Nhi luôn hỗ trợ, và Bình luôn gánh vác cùng Nam.</p>
+                <p class="click-hint">(Chạm nhẹ để đi tiếp...)</p>
+            </div>
+        </div>
+    </section>
+    
+
+    <section class="event" id="event6" onclick="nextEvent('video')">
+        <div class="card-container">
+            <div class="flower flower-tr">🎓</div>
+            <div class="flower flower-bl">✨</div>
+            <div class="img-wrapper">
+                <img src="anh6.jpg" alt="Ky niem 6">
+            </div>
+            <div class="text-content">
+                <h2>Bài học thanh xuân</h2>
+                <p>Chính những khó khăn, áp lực đó đã để lại cho tụi mình những kinh nghiệm quý giá, giúp chúng ta trưởng thành và vững vàng hơn trên chặng đường phía trước. Yêu 3 người cộng sự này nhiều!</p>
+                <p class="click-hint">(Chạm lần cuối để kết thúc...)</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="event" id="video-section" onclick="nextEvent('end')">
+        <div class="card-container">
+            <div class="flower flower-tl">✨</div>
+            <div class="flower flower-br">🎬</div>
+            <div class="img-wrapper" style="background: linear-gradient(45deg, #fdbb2d 0%, #b21f1f 100%);">
+                <video class="video-item" controls>
+                    <source src="video-memories.mp4" type="video/mp4">
+                    Trình duyệt không hỗ trợ video.
+                </video>
+            </div>
+            <div class="text-content">
+                <h2>Khoảnh khắc rực rỡ</h2>
+                <p>Đêm Memories ấy, tiếng hô vang của chúng mình vẫn còn đọng mãi. Cùng xem lại nhé!</p>
+                <p class="click-hint">(Xem xong video, chạm để đến lời kết...)</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="end">
+        <div style="max-width: 800px;">
+            <h2>Hành Trình Trọn Vẹn</h2>
+            <p style="font-size: 1.3rem; line-height: 1.8; margin-bottom: 30px;">Cảm ơn Thùy, Nhi và Bình vì đã là một phần không thể thiếu trong thanh xuân của Nam tại Hương Vinh. Hãy giữ mãi ngọn lửa nhiệt huyết này và hẹn gặp lại chúng mình ở những thành công mới nhé!</p>
+            <p style="font-family: 'Dancing Script', cursive; font-size: 3rem; color: #ff9a9e;">Thương!</p>
+        </div>
+    </section>
+
+    <script>
+        // Xử lý nút bắt đầu và tự động phát nhạc
+        function startJourney() {
+            const bgMusic = document.getElementById('bg-music');
+            // Cố gắng phát nhạc khi người dùng click (vượt qua rào cản của trình duyệt)
+            let playPromise = bgMusic.play();
+            if (playPromise !== undefined) {
+                playPromise.then(_ => {
+                    // Phát nhạc thành công
+                }).catch(error => {
+                    console.log("Trình duyệt chặn phát nhạc tự động");
+                });
+            }
+            
+            const firstEvent = document.getElementById('event1');
+            firstEvent.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Xử lý chuyển trang mượt mà
+       // Xử lý chuyển trang mượt mà (Đã cập nhật logic Video)
+        function nextEvent(target) {
+            let nextElementId;
+            const bgMusic = document.getElementById('bg-music');
+
+            if (target === 'video') {
+                nextElementId = 'video-section';
+                // Khi lăn xuống video, giảm nhạc nền xuống 30% để nghe rõ tiếng hô Memories
+                if(bgMusic) bgMusic.volume = 0.3; 
+            } else if (target === 'end') {
+                nextElementId = 'end';
+                // Khi đến phần kết thúc, mở nhạc nền to lên lại 100%
+                if(bgMusic) bgMusic.volume = 1.0; 
+            } else {
+                nextElementId = `event${target}`;
+            }
+            
+            const nextElement = document.getElementById(nextElementId);
+            if (nextElement) {
+                nextElement.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+
+        // Hiệu ứng xuất hiện khi cuộn tới
+        const events = document.querySelectorAll('.event');
+        const observerOptions = {
+            root: null,
+            rootMargin: '-50px',
+            threshold: 0.3
+        };
+
+        const eventObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, observerOptions);
+
+        events.forEach(event => eventObserver.observe(event));
+    </script>
+
+</body>
+</html>
